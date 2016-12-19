@@ -29,7 +29,10 @@ module XMLR
         #{block.call}
       </#{name}>
     EOS
-   end
+  end
+
+  def content_tag_with_args(name, args, block)
+  end
 
   def empty_tag_without_args(name)
     "<#{name} />"

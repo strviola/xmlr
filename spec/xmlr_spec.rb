@@ -19,6 +19,21 @@ describe XMLR do
       end
     end
 
+    context 'with parameters start and end tag' do
+      subject do
+        div style: "text-align: center;", class: [:wrapper, :body] do
+          "This is body."
+        end
+      end
+      it do
+        is_expected.to eq <<~EOS
+          <div style="text-align: center;" class="wrapper body">
+            This is body.
+          </div>
+        EOS
+      end
+    end
+
     context 'no parameters single tag' do
       subject { br }
       it do
