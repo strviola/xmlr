@@ -47,5 +47,27 @@ describe XMLR do
         is_expected.to eq %(<hr id="content-main--division" class="solid red" />)
       end
     end
+
+    context 'nested tags' do
+      subject do
+        doctype
+        html do
+          head do
+            meta "http-equiv" => "Content-type", content: %w(text-html; charset=utf-8)
+            title do
+              "XMLRサンプルファイル"
+            end
+          end
+          body do
+            div class: %w(wrapper content-main) do
+              "XMLRへようこそ"
+            end
+          end
+        end
+      end
+      it do
+        is_expected.to eq File.open('spec/sample_output/sample.html').read
+      end
+    end
   end
 end
