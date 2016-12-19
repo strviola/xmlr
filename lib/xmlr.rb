@@ -24,7 +24,7 @@ module XMLR
   end
 
   def content_tag_without_args(name, block)
-    return <<~EOS
+    <<~EOS
       <#{name}>
         #{block.call}
       </#{name}>
@@ -32,6 +32,11 @@ module XMLR
   end
 
   def content_tag_with_args(name, args, block)
+    <<~EOS
+      <#{name} #{args_to_param(args[0])}>
+        #{block.call}
+      </#{name}>
+    EOS
   end
 
   def empty_tag_without_args(name)
