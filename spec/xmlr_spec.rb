@@ -1,23 +1,35 @@
 require "spec_helper"
 
-describe Xmlr do
+describe XMLR do
   it "has a version number" do
     expect(Xmlr::VERSION).not_to be nil
   end
 
   describe 'xmlr' do
-    include Doctype
-    context 'no args single tag' do
-      subject { hoge }
+    include XMLR
+
+    context 'no parameters start and end tag' do
+      subject { strong { "WARNING: Too big size" } }
       it do
-        is_expected.to eq "<hoge />"
+        is_expected.to eq <<~EOS
+          <strong>
+            WARNING: Too big size
+          </strong>
+        EOS
       end
     end
 
-    context 'with args single tag' do
-      subject { hoge id: :my_id, class: [:class1, :class2] }
+    context 'no parameters single tag' do
+      subject { br }
       it do
-        is_expected.to eq %(<hoge id="my_id" class="class1 class2" />)
+        is_expected.to eq "<br />"
+      end
+    end
+
+    context 'with parameters single tag' do
+      subject { hr id: "content-main--division", class: [:solid, :red] }
+      it do
+        is_expected.to eq %(<hr id="content-main--division" class="solid red" />)
       end
     end
   end

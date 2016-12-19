@@ -1,7 +1,12 @@
 require "xmlr/version"
 require 'pry'
 
-module Doctype
+module XMLR
+
+  def doctype
+    "<!DOCTYPE html>"
+  end
+
   private
 
   def value_to_str(value)
@@ -18,6 +23,14 @@ module Doctype
     end[1..-1]
   end
 
+  def content_tag_without_args(name, block)
+    return <<~EOS
+      <#{name}>
+        #{block.call}
+      </#{name}>
+    EOS
+   end
+
   def empty_tag_without_args(name)
     "<#{name} />"
   end
@@ -28,7 +41,11 @@ module Doctype
 
   def method_missing(method_name, *args, &block)
     if block_given?
-      "<#{method_name}>(TODO)</#{method_name}>"
+      if args.empty?
+        content_tag_without_args(method_name, block)
+      else
+        content_tag_with_args(method_name, args, block)
+      end
     else
       if args.empty?
         empty_tag_without_args(method_name)
