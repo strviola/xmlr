@@ -11,7 +11,10 @@ describe XMLR do
     before(:each) { reset }
 
     context 'no parameters start and end tag' do
-      subject { strong { "WARNING: Too big size" } }
+      subject do
+        strong { "WARNING: Too big size" }
+        get
+      end
       it do
         is_expected.to eq <<~EOS
           <strong>
@@ -26,6 +29,7 @@ describe XMLR do
         div style: "text-align: center;", class: [:wrapper, :body] do
           "This is body."
         end
+        get
       end
       it do
         is_expected.to eq <<~EOS

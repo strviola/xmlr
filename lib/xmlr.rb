@@ -41,12 +41,14 @@ module XMLR
     add_content "<#{name}>\n"
     add_content "  #{block.call}\n"
     add_content "</#{name}>\n"
+    ""
   end
 
   def content_tag_with_args(name, args, block)
     add_content "<#{name} #{args_to_param(args[0])}>\n"
     add_content "  #{block.call}\n"
     add_content "</#{name}>\n"
+    ""
   end
 
   def empty_tag_without_args(name)
