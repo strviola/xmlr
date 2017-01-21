@@ -4,10 +4,24 @@ require 'pry'
 module XMLR
 
   def doctype
-    "<!DOCTYPE html>"
+    add_content "<!DOCTYPE HTML>\n"
+  end
+
+  def reset
+    @@content = ""
+  end
+
+  def get
+    @@content
   end
 
   private
+
+  def add_content(str)
+    str.tap do |text|
+      @@content += text
+    end
+  end
 
   def value_to_str(value)
     if value.is_a?(Array)
@@ -24,27 +38,23 @@ module XMLR
   end
 
   def content_tag_without_args(name, block)
-    <<~EOS
-      <#{name}>
-        #{block.call}
-      </#{name}>
-    EOS
+    add_content "<#{name}>\n"
+    add_content "  #{block.call}\n"
+    add_content "</#{name}>\n"
   end
 
   def content_tag_with_args(name, args, block)
-    <<~EOS
-      <#{name} #{args_to_param(args[0])}>
-        #{block.call}
-      </#{name}>
-    EOS
+    add_content "<#{name} #{args_to_param(args[0])}>\n"
+    add_content "  #{block.call}\n"
+    add_content "</#{name}>\n"
   end
 
   def empty_tag_without_args(name)
-    "<#{name} />"
+    add_content "<#{name} />\n"
   end
 
   def empty_tag_with_args(name, args)
-    %(<#{name} #{args_to_param(args)} />)
+    add_content "<#{name} #{args_to_param(args)} />\n"
   end
 
   def method_missing(method_name, *args, &block)
