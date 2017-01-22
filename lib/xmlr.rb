@@ -36,10 +36,14 @@ module XMLR
     end
   end
 
-  def args_to_param(args)
-    args.inject("") do |base, kv|
-      %(#{base} #{kv[0]}="#{value_to_str(kv[1])}")
-    end[1..-1]
+  def args_to_param(*args)
+    if args.empty?
+      ""
+    else
+      args[0].inject("") do |base, kv|
+        %(#{base} #{kv[0]}="#{value_to_str(kv[1])}")
+      end[1..-1]
+    end
   end
 
   def content_tag_without_args(name, block)
@@ -60,12 +64,8 @@ module XMLR
     ""
   end
 
-  def empty_tag_without_args(name)
-    add_content "<#{name} />\n"
-  end
-
-  def empty_tag_with_args(name, args)
-    add_content "<#{name} #{args_to_param(args)} />\n"
+  def empty_tag(name, *args)
+    add_content "<#{name} #{args_to_param(*args)}/>\n"
   end
 
   def method_missing(method_name, *args, &block)
@@ -76,11 +76,7 @@ module XMLR
         content_tag_with_args(method_name, args, block)
       end
     else
-      if args.empty?
-        empty_tag_without_args(method_name)
-      else
-        empty_tag_with_args(method_name, *args)
-      end
+      empty_tag(method_name, *args)
     end
   end
 end
