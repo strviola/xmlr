@@ -9,17 +9,22 @@ module XMLR
 
   def reset
     @@content = ""
+    @@nest_level = 0
   end
 
   def get
-    @@content
+    @@content.gsub(/^\s*$\n/, "")
   end
 
   private
 
+  def indent
+    '  ' * @@nest_level
+  end
+
   def add_content(str)
     str.tap do |text|
-      @@content += text
+      @@content += indent + text
     end
   end
 
@@ -39,14 +44,18 @@ module XMLR
 
   def content_tag_without_args(name, block)
     add_content "<#{name}>\n"
-    add_content "  #{block.call}\n"
+    @@nest_level += 1
+    add_content "#{block.call}\n"
+    @@nest_level -= 1
     add_content "</#{name}>\n"
     ""
   end
 
   def content_tag_with_args(name, args, block)
     add_content "<#{name} #{args_to_param(args[0])}>\n"
-    add_content "  #{block.call}\n"
+    @@nest_level += 1
+    add_content "#{block.call}\n"
+    @@nest_level -= 1
     add_content "</#{name}>\n"
     ""
   end

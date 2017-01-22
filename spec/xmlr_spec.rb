@@ -86,7 +86,7 @@ describe XMLR do
         doctype
         html do
           head do
-            meta "http-equiv" => "Content-type", content: %w(text-html; charset=utf-8)
+            meta "http-equiv" => "Content-type", content: %w(text/html; charset=utf-8)
             title do
               "XMLRサンプルファイル"
             end
