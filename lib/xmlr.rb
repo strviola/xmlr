@@ -4,10 +4,29 @@ require 'pry'
 module XMLR
 
   def doctype
-    "<!DOCTYPE html>"
+    add_content "<!DOCTYPE HTML>\n"
+  end
+
+  def reset
+    @@content = ""
+    @@nest_level = 0
+  end
+
+  def get
+    @@content.gsub(/^\s*$\n/, "")
   end
 
   private
+
+  def indent
+    '  ' * @@nest_level
+  end
+
+  def add_content(str)
+    str.tap do |text|
+      @@content += indent + text
+    end
+  end
 
   def value_to_str(value)
     if value.is_a?(Array)
@@ -24,19 +43,29 @@ module XMLR
   end
 
   def content_tag_without_args(name, block)
-    return <<~EOS
-      <#{name}>
-        #{block.call}
-      </#{name}>
-    EOS
-   end
+    add_content "<#{name}>\n"
+    @@nest_level += 1
+    add_content "#{block.call}\n"
+    @@nest_level -= 1
+    add_content "</#{name}>\n"
+    ""
+  end
+
+  def content_tag_with_args(name, args, block)
+    add_content "<#{name} #{args_to_param(args[0])}>\n"
+    @@nest_level += 1
+    add_content "#{block.call}\n"
+    @@nest_level -= 1
+    add_content "</#{name}>\n"
+    ""
+  end
 
   def empty_tag_without_args(name)
-    "<#{name} />"
+    add_content "<#{name} />\n"
   end
 
   def empty_tag_with_args(name, args)
-    %(<#{name} #{args_to_param(args)} />)
+    add_content "<#{name} #{args_to_param(args)} />\n"
   end
 
   def method_missing(method_name, *args, &block)
