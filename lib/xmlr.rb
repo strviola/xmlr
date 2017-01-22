@@ -7,16 +7,18 @@ module XMLR
     add_content "<!DOCTYPE HTML>\n"
   end
 
-  def reset
-    @@content = ""
-    @@nest_level = 0
-  end
-
   def get
-    @@content.gsub(/^\s*$\n/, "")
+    @@content.gsub(/^\s*$\n/, "").tap do
+      @@content = ""
+    end
   end
 
   private
+
+  def self.included(base)
+    @@content = ""
+    @@nest_level = 0
+  end
 
   def indent
     '  ' * @@nest_level
