@@ -50,7 +50,7 @@ describe XMLR do
     context 'with parameters single tag' do
       subject { hr id: "content-main--division", class: [:solid, :red] }
       it do
-        is_expected.to eq %Q(<hr id="content-main--division" class="solid red"/>\n)
+        is_expected.to eq %Q(<hr id="content-main--division" class="solid red" />\n)
       end
     end
 
