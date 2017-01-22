@@ -7,16 +7,18 @@ module XMLR
     add_content "<!DOCTYPE HTML>\n"
   end
 
-  def reset
-    @@content = ""
-    @@nest_level = 0
-  end
-
   def get
-    @@content.gsub(/^\s*$\n/, "")
+    @@content.gsub(/^\s*$\n/, "").tap do
+      @@content = ""
+    end
   end
 
   private
+
+  def self.included(base)
+    @@content = ""
+    @@nest_level = 0
+  end
 
   def indent
     '  ' * @@nest_level
@@ -36,14 +38,18 @@ module XMLR
     end
   end
 
-  def args_to_param(args)
-    args.inject("") do |base, kv|
-      %(#{base} #{kv[0]}="#{value_to_str(kv[1])}")
-    end[1..-1]
+  def args_to_param(*args)
+    if args.empty?
+      ""
+    else
+      " " + args[0].inject("") do |base, kv|
+        %(#{base} #{kv[0]}="#{value_to_str(kv[1])}")
+      end[1..-1]
+    end
   end
 
-  def content_tag_without_args(name, block)
-    add_content "<#{name}>\n"
+  def content_tag(name, *args, block)
+    add_content "<#{name}#{args_to_param(*args)}>\n"
     @@nest_level += 1
     add_content "#{block.call}\n"
     @@nest_level -= 1
@@ -51,36 +57,15 @@ module XMLR
     ""
   end
 
-  def content_tag_with_args(name, args, block)
-    add_content "<#{name} #{args_to_param(args[0])}>\n"
-    @@nest_level += 1
-    add_content "#{block.call}\n"
-    @@nest_level -= 1
-    add_content "</#{name}>\n"
-    ""
-  end
-
-  def empty_tag_without_args(name)
-    add_content "<#{name} />\n"
-  end
-
-  def empty_tag_with_args(name, args)
-    add_content "<#{name} #{args_to_param(args)} />\n"
+  def empty_tag(name, *args)
+    add_content "<#{name}#{args_to_param(*args)} />\n"
   end
 
   def method_missing(method_name, *args, &block)
     if block_given?
-      if args.empty?
-        content_tag_without_args(method_name, block)
-      else
-        content_tag_with_args(method_name, args, block)
-      end
+      content_tag(method_name, *args, block)
     else
-      if args.empty?
-        empty_tag_without_args(method_name)
-      else
-        empty_tag_with_args(method_name, *args)
-      end
+      empty_tag(method_name, *args)
     end
   end
 end

@@ -8,8 +8,6 @@ describe XMLR do
   describe 'xmlr' do
     include XMLR
 
-    before(:each) { reset }
-
     context 'no parameters start and end tag' do
       subject do
         strong { "WARNING: Too big size" }
@@ -41,21 +39,30 @@ describe XMLR do
     end
 
     context 'no parameters single tag' do
-      subject { br }
+      subject do
+        br
+        get
+      end
       it do
         is_expected.to eq "<br />\n"
       end
     end
 
     context 'with parameters single tag' do
-      subject { hr id: "content-main--division", class: [:solid, :red] }
+      subject do
+        hr id: "content-main--division", class: [:solid, :red]
+        get
+      end
       it do
         is_expected.to eq %Q(<hr id="content-main--division" class="solid red" />\n)
       end
     end
 
     context '#doctype' do
-      subject { doctype }
+      subject do
+        doctype
+        get
+      end
       it { is_expected.to eq "<!DOCTYPE HTML>\n" }
     end
 
@@ -100,7 +107,6 @@ describe XMLR do
         get
       end
       it do
-        puts subject
         is_expected.to eq File.open('spec/sample_output/sample.html').read
       end
     end
